@@ -26,7 +26,7 @@ def fuzi_arco (acao_cacador, vida_fatalis):
     
     return vida_fatalis
 
-def glaive_inseto (acao_cacador, vida_fatalis, extrato_kinseto, vidas_cacador):
+def glaive_inseto (acao_cacador, vida_fatalis, extrato_kinseto):
     if acao_cacador == "Corte Aéreo":
         vida_fatalis-=100
         return vida_fatalis
@@ -68,20 +68,26 @@ print("Hora de Lutar contra a Historia!")
 print()
 
 for i in range(4):
-    if vivo_gs == True and vidas_cacador_great_sword > 0:
+    if vivo_gs == True and vidas_cacador_great_sword > 0: # Ação caçador Great Sword
         acao_cacador_gs = input()
-    if vivo_gi == True and vidas_cacador_glaive_inseto > 0:
+        vidas_fatalis = great_sword(acao_cacador_gs, vidas_fatalis)
+    if vivo_gi == True and vidas_cacador_glaive_inseto > 0: # Ação caçador Glaive Inseto
         acao_cacador_gi = input()
         if acao_cacador_gi == "Kinseto":
             extrato_kinseto = input()
-    if vivo_fa == True and vidas_cacador_fuzi_arco > 0:
+        vidas_fatalis = glaive_inseto(acao_cacador_gi, vidas_fatalis, extrato_kinseto)
+    if vivo_fa == True and vidas_cacador_fuzi_arco > 0: # Ação caçador Fuzi Arco
         acao_cacador_fa = input()
-    if vidas_fatalis > 0:
+        vidas_fatalis = fuzi_arco(acao_cacador_fa, vidas_fatalis)
+    if vidas_fatalis > 0: # Ação caçador Fatalis
         acao_fatalis = input()
         if acao_fatalis == "Mar de Chamas Negras":
             status_gs = input()
             status_gi = input()
             status_fa = input()
+        vidas_fatalis = fatalis(vidas_cacador_great_sword, vidas_cacador_glaive_inseto, vidas_cacador_fuzi_arco, acao_fatalis, status_gs, status_gi, status_fa, vivo_gs, vivo_gi, vivo_fa)
+
+    
 
 if vidas_fatalis > 0:
     print("O Fatalis conseguiu sobreviver ao combate...")

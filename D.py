@@ -47,8 +47,7 @@ print()
 
 def iniciar (pokemon1, pokemon2):
     if int(pokemon2[7]) > int(pokemon1[7]):
-        pokemon1 = pokemon2
-        pokemon2 = pokemon1
+        pokemon1, pokemon2 = pokemon2, pokemon1
     return [pokemon1, pokemon2]
 
 # Função de cálculo do dano
@@ -58,11 +57,11 @@ def dano (pokemon1, pokemon2, atacante):
 
     if atacante == pokemon1:
         # Super efetivos
-        if (tipo_pokemon1 == "fogo" and tipo_pokemon2 == "grama") or (tipo_pokemon1 == "água" and tipo_pokemon2 == "fogo") or (tipo_pokemon1 == "grama" and tipo_pokemon2 == "água") or (tipo_pokemon1 == "eletrico" and tipo_pokemon2 == "água"):
+        if (tipo_pokemon1 == "fogo" and tipo_pokemon2 == "grama") or (tipo_pokemon1 == "agua" and tipo_pokemon2 == "fogo") or (tipo_pokemon1 == "grama" and tipo_pokemon2 == "agua") or (tipo_pokemon1 == "eletrico" and tipo_pokemon2 == "agua"):
             multiplicador_tipo = 2
             tipo_ataque = "super efetivo"
         # Não muito efetivo
-        elif (tipo_pokemon1 == "grama" and tipo_pokemon2 == "fogo") or (tipo_pokemon1 == "água" and tipo_pokemon2 == "fogo") or (tipo_pokemon1 == "grama" and tipo_pokemon2 == "água") or (tipo_pokemon1 == "água" and tipo_pokemon2 == "eletrico"):
+        elif (tipo_pokemon1 == "grama" and tipo_pokemon2 == "fogo") or (tipo_pokemon1 == "agua" and tipo_pokemon2 == "fogo") or (tipo_pokemon1 == "grama" and tipo_pokemon2 == "agua") or (tipo_pokemon1 == "agua" and tipo_pokemon2 == "eletrico"):
             multiplicador_tipo = 0.5
             tipo_ataque = "não muito efetivo"
         # Neutro
@@ -73,14 +72,14 @@ def dano (pokemon1, pokemon2, atacante):
         # Calculando o dano
         poder_ataque = int(pokemon1[5])
         defesa_defensor = int(pokemon2[3])
-        dano_final = (poder_ataque - (defesa_defensor / 2)) * multiplicador_tipo
+        dano_final = int((poder_ataque - (defesa_defensor / 2)) * multiplicador_tipo)
     else:
         # Não muito efetivo
-        if (tipo_pokemon1 == "fogo" and tipo_pokemon2 == "grama") or (tipo_pokemon1 == "água" and tipo_pokemon2 == "fogo") or (tipo_pokemon1 == "grama" and tipo_pokemon2 == "água") or (tipo_pokemon1 == "eletrico" and tipo_pokemon2 == "água"):
+        if (tipo_pokemon1 == "fogo" and tipo_pokemon2 == "grama") or (tipo_pokemon1 == "agua" and tipo_pokemon2 == "fogo") or (tipo_pokemon1 == "grama" and tipo_pokemon2 == "agua") or (tipo_pokemon1 == "eletrico" and tipo_pokemon2 == "agua"):
             multiplicador_tipo = 0.5
             tipo_ataque = "não muito efetivo"
         # Super efetivo
-        elif (tipo_pokemon1 == "grama" and tipo_pokemon2 == "fogo") or (tipo_pokemon1 == "água" and tipo_pokemon2 == "fogo") or (tipo_pokemon1 == "grama" and tipo_pokemon2 == "água") or (tipo_pokemon1 == "água" and tipo_pokemon2 == "eletrico"):
+        elif (tipo_pokemon1 == "grama" and tipo_pokemon2 == "fogo") or (tipo_pokemon1 == "agua" and tipo_pokemon2 == "fogo") or (tipo_pokemon1 == "grama" and tipo_pokemon2 == "agua") or (tipo_pokemon1 == "agua" and tipo_pokemon2 == "eletrico"):
             multiplicador_tipo = 2
             tipo_ataque = "super efetivo"
         # Neutro
@@ -89,11 +88,89 @@ def dano (pokemon1, pokemon2, atacante):
             tipo_ataque = "neutro"
 
         # Calculando o dano
-        poder_ataque = int(pokemon1[5])
-        defesa_defensor = int(pokemon2[3])
-        dano_final = (poder_ataque - (defesa_defensor / 2)) * multiplicador_tipo
+        poder_ataque = int(pokemon2[5])
+        defesa_defensor = int(pokemon1[3])
+        dano_final = int((poder_ataque - (defesa_defensor / 2)) * multiplicador_tipo)
+
+        if dano_final <= 0:
+            dano_final = 1
 
     return [tipo_ataque, dano_final]
+
+# Função das batalhas de turnos (duelo individual)
+def batalha_turnos (pokemon1, pokemon2, derrotados_jogador, derrotados_oponente, hp_inicial1, hp_inicial2):
+    n_turno = 1
+    while int(pokemon1[2]) > 0 and int(pokemon2[2]) > 0:
+        print()
+        print(f"-- Turno {n_turno} --")
+        # Ataque do pokémon 1
+        atacante = pokemon1
+
+        lista_dano = dano(pokemon1, pokemon2, atacante)
+        dano_final = lista_dano[1]
+        tipo_ataque = lista_dano[0]
+
+        if int(pokemon1[2]) > 0:
+            print()
+            if pokemon1 in time_jogador:
+                print(f"{pokemon1[0]} usa {pokemon1[4]}!")
+            else:
+                print(f"{pokemon1[0]} do oponente usa {pokemon1[4]}!")
+
+            if tipo_ataque == "super efetivo":
+                print(f"{pokemon1[4]} é super efetivo!")
+            elif tipo_ataque == "não muito efetivo":
+                print(f"{pokemon1[4]} não é muito efetivo...")
+
+            print(f"Causou {dano_final} de dano. HP de {pokemon2[0]} agora é {int(pokemon2[2])-dano_final}/{hp_inicial2}.")
+            pokemon2[2] = int(pokemon2[2]) - dano_final
+
+        # Ataque do pokémon 2
+        atacante = pokemon2
+
+        lista_dano = dano(pokemon1, pokemon2, atacante)
+        dano_final = lista_dano[1]
+        tipo_ataque = lista_dano[0]
+        
+        if int(pokemon2[2]) > 0:
+            print()
+            if pokemon2 in time_jogador:
+                print(f"{pokemon2[0]} usa {pokemon2[4]}!")
+            else:
+                print(f"{pokemon2[0]} do oponente usa {pokemon2[4]}!")
+
+            if tipo_ataque == "super efetivo":
+                print(f"{pokemon2[4]} é super efetivo!")
+            elif tipo_ataque == "não muito efetivo":
+                print(f"{pokemon2[4]} não é muito efetivo...")
+
+            print(f"Causou {dano_final} de dano. HP de {pokemon1[0]} agora é {int(pokemon1[2])-dano_final}/{hp_inicial1}.")
+            pokemon1[2] = int(pokemon1[2]) - dano_final
+
+        n_turno+=1
+
+    # Fim do duelo
+    print()
+    if int(pokemon1[2]) <= 0:
+        if pokemon1 in time_jogador:
+            print(f"{pokemon1[0]} foi derrotado!")
+            time_jogador.remove(pokemon1)
+            derrotados_jogador+=1
+        else:
+            print(f"{pokemon1[0]} do oponente foi derrotado!")
+            time_oponente.remove(pokemon1)
+            derrotados_oponente+=1
+    elif int(pokemon2[2]) <= 0:
+        if pokemon2 in time_jogador:
+            print(f"{pokemon2[0]} foi derrotado!")
+            time_jogador.remove(pokemon2)
+            derrotados_jogador+=1
+        else:
+            print(f"{pokemon2[0]} do oponente foi derrotado!")
+            time_oponente.remove(pokemon2)
+            derrotados_oponente+=1
+
+    return [time_jogador, time_oponente, derrotados_jogador, derrotados_oponente]
 
 # Batalhas
 print("====================")
@@ -101,7 +178,8 @@ print("A BATALHA VAI COMEÇAR!")
 print("====================")
 
 derrotados_jogador = 0
-derrotados_oponentes = 0
+derrotados_oponente = 0
+n_rodada = 1
 while len(time_oponente) > 0 and len(time_jogador) > 0:
     pokemon1 = time_jogador[0]
     pokemon2 = time_oponente[0]
@@ -114,87 +192,22 @@ while len(time_oponente) > 0 and len(time_jogador) > 0:
     ordem = iniciar(pokemon1, pokemon2)
     pokemon1 = ordem[0] # Ataque
     pokemon2 = ordem[1] # Defesa
+    hp_inicial1 = pokemon1[2]
+    hp_inicial2 = pokemon2[2]
 
-    n_rodada+=1
-    
-    # Def batalha de turnos (duelo individual)
-    def batalha_turnos (pokemon1, pokemon2):
-        n_turno = 1
-        hp_inicial1 = pokemon1[2]
-        hp_inicial2 = pokemon2[2]
-        while pokemon1[2] > 0 and pokemon2[2] > 0:
-            print()
-            print(f"-- Turno {n_turno} --")
-            # Ataque do pokémon 1
-            atacante = pokemon1
-
-            lista_dano = dano(pokemon1, pokemon2, atacante)
-            dano_final = lista_dano[1]
-            tipo_ataque = lista_dano[0]
-
-            print()
-            if pokemon1 in time_jogador:
-                print(f"{pokemon1[0]} usa {pokemon1[4]}")
-            else:
-                print(f"{pokemon1[0]} do oponente usa {pokemon1[4]}")
-
-            if tipo_ataque == "super efetivo":
-                print(f"{pokemon1[4]} é super efetivo!")
-            elif tipo_ataque == "não muito efetivo":
-                print(f"{pokemon1[4]} não é muito efetivo...")
-
-            print(f"Causou {dano_final} de dano. HP de {pokemon2} agora é {pokemon2[2]-dano_final}/{hp_inicial2}.")
-            pokemon2[2] = pokemon2[2] - dano_final
-
-            # Ataque do pokémon 2
-            atacante = pokemon2
-
-            lista_dano = dano(pokemon1, pokemon2, atacante)
-            dano_final = lista_dano[1]
-            tipo_ataque = lista_dano[0]
-
-            print()
-            if pokemon2 in time_jogador:
-                print(f"{pokemon2[0]} usa {pokemon2[4]}")
-            else:
-                print(f"{pokemon2[0]} do oponente usa {pokemon2[4]}")
-
-            if tipo_ataque == "super efetivo":
-                print(f"{pokemon2[4]} é super efetivo!")
-            elif tipo_ataque == "não muito efetivo":
-                print(f"{pokemon2} não é muito efetivo...")
-
-            print(f"Causou {dano_final} de dano. HP de {pokemon1} agora é {pokemon1[2]-dano_final}/{hp_inicial1}.")
-            pokemon1[2] = hp_inicial1-dano_final
-
-            n_turno+=1
-    
-    # Fim do duelo
-    print()
-    if pokemon1[2] <= 0:
-        if pokemon1 in time_jogador:
-            print(f"{pokemon1[0]} foi derrotado!")
-            time_jogador.remove(pokemon1)
-            derrotados_jogador+=1
-        else:
-            print(f"{pokemon1[0]} do oponente foi derrotado!")
-            time_oponente.remove(pokemon1)
-            derrotados_oponentes+=1
-    elif pokemon2[2] <= 0:
-        if pokemon2 in time_jogador:
-            print(f"{pokemon2[0]} foi derrotado!")
-            time_jogador.remove(pokemon2)
-            derrotados_jogador+=1
-        else:
-            print(f"{pokemon2[0]} do oponente foi derrotado!")
-            time_oponente.remove(pokemon2)
-            derrotados_oponentes+=1
+    lista_retorno_turnos = batalha_turnos(pokemon1, pokemon2, derrotados_jogador, derrotados_oponente, hp_inicial1, hp_inicial2)
+    time_jogador = lista_retorno_turnos[0]
+    time_oponente = lista_retorno_turnos[1]
+    derrotados_jogador = lista_retorno_turnos[2]
+    derrotados_oponente = lista_retorno_turnos[3]
 
     # Placar
     print()
     print("--------------------")
     print()
-    print(f"Placar: {derrotados_oponentes} X {derrotados_jogador}")
+    print(f"Placar: {derrotados_oponente} X {derrotados_jogador}")
+
+    n_rodada+=1
 
 if len(time_jogador) > 0:
     print()
@@ -205,5 +218,3 @@ else:
     print("========================================")
     print("Que pena! Você foi derrotado.")
     print("========================================")
-
-    

@@ -49,12 +49,12 @@ def fatalis (vidas_cacador_gs, vidas_cacador_gi, vidas_cacador_fa, acao_fatalis,
         vidas_cacador_gs-=55
         vidas_cacador_gi-=55
         vidas_cacador_fa-=55
-        return vidas_cacador_gs, vidas_cacador_gi, vidas_cacador_fa
+        return [vidas_cacador_gs, vidas_cacador_gi, vidas_cacador_fa]
     elif acao_fatalis == "Bola de Fogo":
         vidas_cacador_gs-=65
         vidas_cacador_gi-=65
         vidas_cacador_fa-=65
-        return vidas_cacador_gs, vidas_cacador_gi, vidas_cacador_fa
+        return [vidas_cacador_gs, vidas_cacador_gi, vidas_cacador_fa]
     else: # Mar de Chamas Negras
         if status_gs == "Desprotegido":
             vivo_gs = False
@@ -62,7 +62,7 @@ def fatalis (vidas_cacador_gs, vidas_cacador_gi, vidas_cacador_fa, acao_fatalis,
             vivo_gi = False
         if status_fa == "Desprotegido":
             vivo_fa = False
-        return vivo_gs, vivo_gi, vivo_fa
+        return [vivo_gs, vivo_gi, vivo_fa]
 
 print("Hora de Lutar contra a Historia!")
 print()
@@ -75,7 +75,10 @@ for i in range(4):
         acao_cacador_gi = input()
         if acao_cacador_gi == "Kinseto":
             extrato_kinseto = input()
-            vidas_cacador_glaive_inseto = glaive_inseto(acao_cacador_gi, vidas_fatalis, vidas_cacador_glaive_inseto, extrato_kinseto)
+            if extrato_kinseto == "Verde":
+                vidas_cacador_glaive_inseto = glaive_inseto(acao_cacador_gi, vidas_fatalis, vidas_cacador_glaive_inseto, extrato_kinseto)
+            else:
+                vidas_fatalis = glaive_inseto(acao_cacador_gi, vidas_fatalis, vidas_cacador_glaive_inseto, extrato_kinseto)
         else:
             vidas_fatalis = glaive_inseto(acao_cacador_gi, vidas_fatalis, vidas_cacador_glaive_inseto, extrato_kinseto="")
     if vivo_fa == True and vidas_cacador_fuzi_arco > 0: # Ação caçador Fuzi Arco
